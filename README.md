@@ -43,6 +43,7 @@ cd webcut-main
 ```
 
 3.安装依赖
+本人的安装环境为nodejs18，可能会有些许不兼容
 ```bash
 npm install
 ```
@@ -62,8 +63,9 @@ npm run build-only
 这是个实验项目，功能已经基本完成，欢迎各位fork
 
 ## 灵感来源
-https://github.com/bilibili/WebAV
-https://github.com/x007xyz/fly-cut
+- https://github.com/bilibili/WebAV
+- https://github.com/x007xyz/fly-cut
+- https://github.com/Cc-Edit/CcClip
 
 
 
