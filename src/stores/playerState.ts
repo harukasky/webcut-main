@@ -9,10 +9,10 @@ export const usePlayerState = defineStore('playerState', () => {
     height: 0
   });
   // 要播放的总帧数
-  const playerConfig = reactive({
+  const playerConfig = reactive({//画布的不同会导致这边渲染出来的画面也不同
     frameCount: 0,
-    playerWidth: 1920 / 6,
-    playerHeight: 1080 / 6
+    playerWidth: 1920,
+    playerHeight: 1080
   });
   const existVideo = ref(false);
   const playStartFrame = ref(0); // 当前播放帧

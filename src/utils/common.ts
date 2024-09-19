@@ -79,8 +79,8 @@ export function calcLeftTopByCenter(center: { x: number, y: number }, width: num
 //     return null;
 // }
 
-export function getTextRect({ text = 'Hello World', fontSize = 40, fontFamily }: { text: string, fontSize: number, fontFamily: string }) {
-    const padding = 4;
+export function getTextRect({ text = 'Hello World', fontSize = 40, fontFamily }: { text: string, fontSize: number, fontFamily: string }) {//这个是获取文字的矩阵所用到的函数
+    const padding = 4;//这个的影响好像不是最大的
     const canvas = new OffscreenCanvas(1000, 1000);
     const ctx = canvas.getContext('2d');
 

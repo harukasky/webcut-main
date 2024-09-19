@@ -7,7 +7,7 @@ import { OffscreenSprite } from '@webav/av-cliper';
 export interface AudioSource {
   id: string,
   url: string,
-  name: string | undefined,
+  name: string ,
   format: string,
   duration: number
 }
@@ -26,18 +26,17 @@ export class AudioTrack implements BaseTractItem {
   constructor(source: AudioSource, curFrame: number) {
     // 设置ID
     this.id = uniqueId();
-    // 设置音频信息
+    // 设置音频信相对来说，这个算是比较简单的命令
     this.source = source;
     // 获取文件名称
     this.name = source.name;
     // 获取文件类型
     this.format = source.format;
-
     // 获取音频时长，转换为frameCount
     this.frameCount = source.duration * 30;
     this.start = curFrame;
     this.end = this.start + this.frameCount;
-
+    //hello,this is what i like
     // 设置裁剪信息
     this.offsetL = 0;
     this.offsetR = 0;
@@ -71,3 +70,4 @@ export class AudioTrack implements BaseTractItem {
     return spr;
   }
 }
+

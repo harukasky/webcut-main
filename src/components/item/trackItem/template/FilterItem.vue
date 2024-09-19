@@ -16,7 +16,7 @@
       type: Object as PropType<FilterTractItem>,
       default() {
         return {
-          width: '0px',
+          width: '1px',
           left: '0px'
         };
       }

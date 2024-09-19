@@ -176,11 +176,12 @@ async function fetchVoiceFromURL(url: string) {
       url: url,
       name: selectedItem.value?.name,
       format: blob.type,
-      duration: Math.round(clip.meta.duration / 1e6)
+      duration: clip.meta.duration / 1e6,
     }, playStore.playStartFrame);
 
     trackStore.addTrack(audioTrack);
     console.log('更新后的 trackStore:', trackStore);
+    console.log(clip);
   } catch (error) {
     console.error('读取或处理音频文件时出错:', error);
     ElMessage.error('读取或处理音频文件时出错');
@@ -206,9 +207,9 @@ const isRequesting = ref(false); // 用于管理按钮的请求状态
 const config = {
   hostUrl: "wss://tts-api.xfyun.cn/v2/tts",
   host: "tts-api.xfyun.cn",
-  appid: "xxxx", // 请填写你自己的appid
-  apiSecret: "xxxx", // 请填写你自己的apiSecret
-  apiKey: "xxxxx", // 请填写你自己的apiKey
+  appid: "3a582948", // 请填写你自己的appid
+  apiSecret: "ZDhjYmZjYTZjMTA5ZDk3YjUzNTlmY2M3", // 请填写你自己的apiSecret
+  apiKey: "fd6d0aa146f998847dc165d7682002aa", // 请填写你自己的apiKey
   text: word,
   uri: "/v2/tts"
 };

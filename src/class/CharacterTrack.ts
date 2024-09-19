@@ -1,7 +1,8 @@
 import { uniqueId } from 'lodash-es';
 import type { BaseTractItem, TrackType } from './Base';
-import { videoDecoder, splitClip } from '@/utils/webcodecs';
-import { OffscreenSprite } from '@webav/av-cliper';
+import { imageDecoder } from '@/utils/webcodecs';
+import { ImgClip, OffscreenSprite } from '@webav/av-cliper';
+
 import { UnitFrame2μs } from '@/data/trackConfig';
 
 export interface CharacterSource {//只要添加source里面的文件内容即可
@@ -9,16 +10,14 @@ export interface CharacterSource {//只要添加source里面的文件内容即�
     url: string,//本地路径
     name: string,//名称
     format: string,//一般来说都是mp4
-    move: string[],
+    word: string,
     vcn: string,
-    duration: number,//播放时长，这个好像也是计算出来的
+    // duration: number,//播放时长，这个好像也是计算出来的
     width: number,
     height: number,
 }
 
 export class CharacterTrack implements BaseTractItem {
-    //这样的话就算合成完成了，但是视频可以获取时间，这个duration对于图片来说
-    //这个时间就是
     id: string;
     type: TrackType = 'character';
     source: CharacterSource;
@@ -32,8 +31,6 @@ export class CharacterTrack implements BaseTractItem {
     scale: number;
     height: number;
     width: number;
-    offsetL: number;
-    offsetR: number;
     get drawHeight() {
         return this.height * this.scale / 100;
     }
@@ -43,14 +40,14 @@ export class CharacterTrack implements BaseTractItem {
     constructor(source: CharacterSource, curFrame: number) {
         // 设置ID
         this.id = uniqueId();
-        // 设置视频信息
+        // 设置图片信息
         this.source = source;
         // 获取文件名称
         this.name = source.name;
         // 获取文件类型
         this.format = source.format;
         // 设置轨道信息
-        this.frameCount = source.duration * 30;
+        this.frameCount = 30 * 10;
         this.start = curFrame;
         this.end = this.start + this.frameCount;
 
@@ -60,10 +57,6 @@ export class CharacterTrack implements BaseTractItem {
         this.scale = 100;
         this.height = source.height;
         this.width = source.width;
-
-        // 设置裁剪信息
-        this.offsetL = 0;
-        this.offsetR = 0;
     }
     getDrawX(width: number) {
         return width / 2 - this.drawWidth / 2 + this.centerX;
@@ -71,19 +64,11 @@ export class CharacterTrack implements BaseTractItem {
     getDrawY(height: number) {
         return height / 2 - this.drawHeight / 2 + this.centerY;
     }
-    /**
-     * 渲染需要优化
-     * TODO: 不需要没一次都去解码
-     * TODO: 优化画布渲染
-     */
     draw(ctx: CanvasRenderingContext2D, { width, height }: { width: number, height: number }, frameIndex: number) {
-        const frame = Math.max(frameIndex - this.start + this.offsetL, 1); // 默认展示首帧
-        const start = performance.now();
-        return videoDecoder.getFrame(this.source.id, frame).then(async vf => {
+        const frame = Math.max(frameIndex - this.start, 0); // 默认展示首帧
+        return imageDecoder.getFrame(this.source.format, this.source.id, frame).then(vf => {
             if (vf) {
-                console.log('渲染耗时', performance.now() - start, 'ms');
                 ctx.drawImage(vf, 0, 0, this.source.width, this.source.height, this.getDrawX(width), this.getDrawY(height), this.drawWidth, this.drawHeight);
-                vf?.close();
             }
         });
     }
@@ -99,46 +84,21 @@ export class CharacterTrack implements BaseTractItem {
         this.width = this.source.width * scale;
         this.height = this.source.height * scale;
     }
-    audio: HTMLAudioElement | null = null;
-    play(currentFrame: number) {
-        if (!this.audio) {
-            this.audio = new Audio(this.source.url);
-        }
-        if (this.audio?.paused) {
-            this.audio.currentTime = (currentFrame - this.start - this.offsetL) / 30;
-            console.log('🚀 ~ VideoTrack ~ play ~ this.audio.currentTime:', this.audio.currentTime);
-            this.audio.play();
-        }
-    }
-    pause() {
-        if (this.audio && !this.audio.paused) {
-            this.audio.pause();
-        }
-    }
     // 生成合成对象
     async combine(playerSize: { width: number, height: number }, outputRatio: number) {
-        const video = await videoDecoder.decode({ id: this.source.id });
-        const clip = await splitClip(video, { offsetL: this.offsetL, offsetR: this.offsetR, frameCount: this.frameCount });
-        if (!clip) {
-            throw new Error('clip is not ready');
+        const frames = await imageDecoder.decode({ id: this.source.id });
+        if (!frames) {
+            throw new Error('frames is not ready');
         }
+        const clip = new ImgClip(frames);
         const spr = new OffscreenSprite(clip);
         // TODO：需要支持裁剪
-        spr.time = { offset: this.start * UnitFrame2μs, duration: (this.end - this.start) * UnitFrame2μs };
+        spr.time = { offset: this.start * UnitFrame2μs, duration: this.frameCount * UnitFrame2μs };
         spr.rect.x = this.getDrawX(playerSize.width) * outputRatio;
         spr.rect.y = this.getDrawY(playerSize.height) * outputRatio;
         spr.rect.w = this.drawWidth * outputRatio;
         spr.rect.h = this.drawHeight * outputRatio;
 
         return spr;
-    }
-    split(cutFrame: number) {
-        this.end = cutFrame;
-        this.offsetR = this.frameCount + this.start - cutFrame; // 根据cutFrame对视频进行分割
-        // 根据cutFrame对视频进行分割
-        const copy = new CharacterTrack(this.source, cutFrame);
-
-        copy.offsetL = cutFrame - this.start;
-        return copy;
     }
 }

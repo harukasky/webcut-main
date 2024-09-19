@@ -67,8 +67,11 @@ const onGenerate = async () => {
   for (const track of trackState.trackList.reduce((res, { list }) => res.concat(list), [] as Track[])) {
     if (track instanceof AudioTrack) {
       sprs.push(toRaw(track).combine());//音频轨道合成并不需要宽度
-    } else {
+    } else if (track instanceof TextTrack) {
       sprs.push(toRaw(track).combine({ width: playerState.playerWidth, height: playerState.playerHeight }, 6));
+    }
+    else {
+      sprs.push(toRaw(track).combine({ width: playerState.playerWidth, height: playerState.playerHeight }, 1));
     }
   }
   const sprites = await Promise.all(sprs);
@@ -100,6 +103,8 @@ const onGenerate = async () => {
 
   console.log('导出文件耗时', performance.now() - start, 'ms');
   console.log(sprites);
+
+  console.log(trackState);
 };
 
 

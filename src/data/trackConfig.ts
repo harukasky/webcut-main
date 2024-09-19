@@ -7,7 +7,8 @@ export const TrackHeightMap = new Map([
     ['image', 'h-6'],
     ['effect', 'h-6'],
     ['filter', 'h-6'],
-    ['transition', 'h-6']
+    ['transition', 'h-6'],
+    ['character', 'h-6']
 ]);
 
 export let baseFps = 25;
