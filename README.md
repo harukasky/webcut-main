@@ -60,7 +60,7 @@ npm run build-only
 
 ## 提示
 如果想要使用tts API来进行合成，请在/src/components/VoicePanel/index.vue里面进行修改，将里面的appid,apiSecret,apiKey替换成你自己的。
-这是个实验项目，功能已经基本完成，欢迎各位fork
+这是个实验项目，功能已经基本完成，欢迎各位fork,star,issue
 
 ## 灵感来源
 - https://github.com/bilibili/WebAV
