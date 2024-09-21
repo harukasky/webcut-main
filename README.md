@@ -21,15 +21,15 @@
 ```
 
 ## 使用技术
-Vue3 - 用于构建用户界面
-Vite - 构建工具
-TypeScript - 定义类型，处理数据
-Element plus - 强大的VUE3组件库
-Sass - 强大的 CSS 预处理器
-Vue Router - 前端路由管理
-Vuex - 用于管理全局状态
-MP4BOX.js - 用于分析音视频数据
-WebAV - 进行图片，文字，音频，视频的解码[借助WebCodecs API]
+- Vue3 - 用于构建用户界面
+- Vite - 构建工具
+- TypeScript - 定义类型，处理数据
+- Element plus - 强大的VUE3组件库
+- Sass - 强大的 CSS 预处理器
+- Vue Router - 前端路由管理
+- Vuex - 用于管理全局状态
+- MP4BOX.js - 用于分析音视频数据
+- WebAV - 进行图片，文字，音频，视频的解码[借助WebCodecs API]
 
 ## 本地安装
 1.请使用以下git命令将项目克隆到本地
